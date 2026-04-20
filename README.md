@@ -1,163 +1,45 @@
-RagLLM — AI 七巨頭 RAG + LLM 視覺化專案
+# 2026 AI 產業生態與供應鏈矩陣 🌐
 
-這是一個 AI 產業架構視覺化靜態網站專案，展示 2026 年七巨頭 LLM 戰略、RAG 架構與 SSD 擴展基礎設施，並透過 GitHub Pages 自動部署。
+這是一個基於純原生網頁技術（Vanilla Web Technologies）打造的互動式資料視覺化面板。旨在清晰、直覺地展示全球七大科技巨頭（Magnificent 7）的 AI 軟硬體需求，並將其向下對應至台灣股市（台股）的關鍵受惠產業鏈與代表性企業。
 
-本專案包含：
+## ✨ 核心特色 (Features)
 
-七巨頭 AI 競爭架構
-RAG + LLM 技術演進
-GPU / HBM / SSD 三層架構
-投資產業鏈標記
-3D 動態背景與互動式 UI
-專案內容
-主要檔案
-index.html
+* 100% 純原生開發：無需安裝 Node.js、NPM 或任何前端框架（如 React/Vue）。零依賴，極致輕量。
+* 動態互動連動 (Interactive Hover Matrix)：
+    * 當游標懸停於上方科技巨頭（如 OpenAI、NVIDIA）時，會自動高亮其依賴的底層硬體管線（算力、記憶體、儲存）。
+    * 當游標懸停於下方供應鏈管線（如 Storage Layer）時，會反向高亮受惠於此技術區塊的科技巨頭。
+    * 非相關區塊會自動觸發暗化（Dimmed）效果，視覺焦點明確。
+* 深色科技感 UI (Cyberpunk / Neon UI)：採用暗黑背景（Dark Mode）搭配高對比度的霓虹色彩（Neon Blue, Green, Purple, Gold），完美契合 AI 與硬體科技主題。
+* 流暢的轉場動畫：精心調校的 `cubic-bezier` 過渡效果與光暈陰影（Box Shadow），提升操作手感與質感。
+* 自適應無滾動條設計：嚴格控制畫面溢出，確保在主流桌面解析度下能一屏完美展示（100% 視窗高度適配）。
 
-主網站檔案，包含：
+## 🏗️ 架構與資料對應 (Data Mapping)
 
-AI 七巨頭戰略地圖
-3D 粒子動態背景
-GPU / HBM / SSD 架構
-投資產業鏈標記
-點擊展開公司詳細資訊
-市場規模動畫
-.github/workflows/pages.yml
+本圖表將 AI 產業鏈分為三大核心層級：
 
-GitHub Actions 自動部署設定：
+1.  頂層：需求驅動端 (The Magnificent 7)
+    * 涵蓋：OpenAI, Google, Microsoft, Amazon, Meta, Apple, NVIDIA
+    * 標示其軟體生態（如 RAG, Gemini, Copilot）與硬體需求。
+2.  中層：全球核心技術管線 (Global Tech Pipeline)
+    * Compute Layer (算力與網路層)：GPU, AI Server, 網通設備 (綠色視覺)
+    * Memory Layer (高頻寬內存層)：HBM, DRAM (紫色視覺)
+    * Storage Layer (向量儲存與檢索層)：SSD, RAG Vector DB (金色視覺)
+3.  底層：台股受惠產業鏈 (Taiwan Supply Chain)
+    * 將中層技術精準對應至台灣上市櫃公司（如：廣達、緯創、智邦、南亞科、群聯等）。
 
-功能：
+## 🚀 快速開始 (Getting Started)
 
-推送 main 分支自動部署
-自動建置 GitHub Pages
-無需手動發布
-使用方式
+本專案隨插即用，沒有任何繁瑣的環境建置步驟。
 
-將變更提交並推送到 main：
+1. 將原始碼保存為 `index.html`。
+2. 使用任何現代瀏覽器（Google Chrome, Microsoft Edge, Safari, Firefox）雙擊打開該檔案即可運行。
 
-git add index.html .github/workflows/pages.yml
-git commit -m "Deploy RagLLM visualization dashboard"
-git push origin main
-GitHub Pages 存取網址
+## 🛠️ 技術棧 (Tech Stack)
 
-部署完成後，可透過以下網址查看：
+* HTML5: 語意化結構與自訂資料屬性 (`data-links`, `data-target`) 驅動互動邏輯。
+* CSS3: CSS Grid 排版、CSS 變數 (`:root`) 主題管理、豐富的虛擬元素 (`::before`) 與漸層背景。
+* JavaScript (ES6+): 原生 DOM 操作與事件監聽 (`mouseenter`, `mouseleave`)，實現雙向矩陣聯動過濾。
 
-https://jiarong0423.github.io/RagLLM/
+## 📝 授權條款 (License)
 
-（部署通常需 30 秒 — 2 分鐘）
-
-專案功能特色
-
-本專案包含以下視覺化模組：
-
-AI 七巨頭
-OpenAI
-Google
-Microsoft
-Meta
-Amazon
-Apple
-NVIDIA
-AI 三層架構
-
-AI Infrastructure Stack
-
-Layer 1
-GPU Compute
-
-Layer 2
-HBM Memory
-
-Layer 3
-SSD / Vector Database
-
-RAG 架構視覺化
-
-LLM
-↓
-RAG
-↓
-Vector DB
-↓
-SSD Storage
-
-投資產業鏈
-
-GPU
-
-NVIDIA
-AMD
-
-HBM
-
-SK Hynix
-Samsung
-Micron
-
-SSD / Storage
-
-台股可能受惠：
-
-群聯
-慧榮
-威剛
-創見
-南亞科
-旺宏
-客製化修改
-
-若需要修改頁面內容：
-
-直接編輯：
-
-index.html
-
-即可更新：
-
-標題
-公司
-投資標的
-動畫效果
-GitHub Pages 設定
-
-如需進一步設定：
-
-進入：
-
-Repository
-→ Settings
-→ Pages
-
-可設定：
-
-自訂網域
-分支來源
-HTTPS
-專案定位
-
-這個專案可用於：
-
-AI 產業研究
-投資分析
-技術簡報
-個人作品集
-AI 產業觀察
-未來可擴展功能
-
-後續可加入：
-
-AI 市場規模資料 API
-即時股價顯示
-AI 產業鏈熱度圖
-競爭態勢分析
-時間軸演進動畫
-RagLLM 專案目標
-
-打造：
-
-AI 產業互動式研究儀表板
-
-從：
-
-LLM → RAG → Storage → 投資
-
-形成完整 AI 產業鏈視覺化
+This project is open-source and available under the [MIT License](LICENSE). 歡迎自由修改、擴充資料庫或應用於個人投資研究簡報。
