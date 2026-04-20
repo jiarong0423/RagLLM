@@ -1,276 +1,275 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 七巨頭 + 產業鏈 3D 動態版</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 AI 產業管線與台股連動圖 (100% 原生完美適配版)</title>
+    <style>
+        :root {
+            --bg-color: #050b14;
+            --neon-blue: #00f3ff;
+            --neon-purple: #b026ff;
+            --neon-green: #00ff9d;
+            --neon-gold: #ffb700;
+            --neon-pink: #ff007f;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --panel-bg: rgba(15, 23, 42, 0.75);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        body {
+            margin: 0; padding: 20px 20px; background: var(--bg-color);
+            color: var(--text-main); font-family: 'Segoe UI', system-ui, sans-serif;
+            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 70%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            overflow: hidden; /* 防止出現滾動條 */
+        }
 
-<style>
+        .container { 
+            width: 100%; max-width: 1550px; 
+            display: flex; flex-direction: column; gap: 15px; /* 原20px->15px */
+        }
 
-body{
-margin:0;
-overflow:hidden;
-font-family:system-ui;
-background:#020617;
-color:white;
-}
+        /* 標題 */
+        .header { text-align: center; border-bottom: 1px solid var(--neon-blue); padding-bottom: 10px; margin-bottom: 10px; }
+        .header h1 { margin: 0; font-size: 1.9rem; color: #fff; text-shadow: 0 0 15px var(--neon-blue); letter-spacing: 3px; }
+        .header p { margin: 5px 0 0 0; color: var(--neon-blue); font-size: 0.9rem; letter-spacing: 5px; }
 
-#bg{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-z-index:-1;
-}
+        /* 通用過渡效果 */
+        .interactive-node { transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .dimmed { opacity: 0.25; filter: grayscale(70%); }
+        .highlighted { transform: scale(1.03); z-index: 10; box-shadow: 0 0 25px rgba(255,255,255,0.15); }
 
-.wrapper{
-position:relative;
-width:1500px;
-height:950px;
-margin:auto;
-}
+        /* 上層：七巨頭 (水平排列) */
+        .mag7-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; } 
+        .mag7-card {
+            background: var(--panel-bg); border: 1px solid var(--border-color);
+            border-top: 4px solid var(--neon-blue); border-radius: 8px; padding: 15px 12px; 
+            cursor: pointer;
+        }
+        .mag7-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(0, 243, 255, 0.3); }
+        .mag7-card h3 { margin: 0 0 10px 0; text-align: center; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .tag-group { margin-bottom: 8px; }
+        .tag-title { font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
+        .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+        .tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 4px; font-size: 0.7rem; color: #e2e8f0; }
 
-.panel{
-position:absolute;
-width:260px;
-padding:16px;
-background:rgba(15,23,42,.8);
-border-radius:14px;
-border:1px solid rgba(255,255,255,.15);
-backdrop-filter:blur(12px);
-transition:.3s;
-cursor:pointer;
-}
+        /* 向下匯流箭頭適度放寬 */
+        .funnel { display: flex; justify-content: center; align-items: center; padding: 5px 0; color: var(--text-muted); flex-direction: column; }
+        .funnel::before { content: '|||||||'; background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent); -webkit-background-clip: text; color: transparent; font-size: 1.2rem; letter-spacing: 15px;}
+        .funnel span { font-size: 0.8rem; margin-top: 4px; color: var(--neon-blue); border: 1px solid var(--neon-blue); padding: 3px 12px; border-radius: 12px; }
 
-.panel:hover{
-transform:scale(1.05);
-}
+        /* 中下層：主機板管線式架構 */
+        .pipeline-layer {
+            display: grid; grid-template-columns: 180px 1fr 320px; gap: 2px; 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            border-radius: 10px; overflow: hidden; margin-bottom: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); cursor: pointer;
+        }
+        .pipeline-layer > div { padding: 18px 25px; background: var(--panel-bg); display: flex; flex-direction: column; justify-content: center; } 
+        
+        /* 特殊邊框顏色標識 */
+        .layer-compute { border-left: 5px solid var(--neon-green); }
+        .layer-compute:hover { box-shadow: 0 0 25px rgba(0, 255, 157, 0.15); border-color: var(--neon-green); }
+        
+        .layer-memory { border-left: 5px solid var(--neon-purple); }
+        .layer-memory:hover { box-shadow: 0 0 25px rgba(176, 38, 255, 0.15); border-color: var(--neon-purple); }
+        
+        .layer-storage { border-left: 5px solid var(--neon-gold); }
+        .layer-storage:hover { box-shadow: 0 0 25px rgba(255, 183, 0, 0.15); border-color: var(--neon-gold); }
 
-.detail{
-display:none;
-margin-top:10px;
-font-size:12px;
-}
+        /* 管線左側：AI Stack */
+        .col-stack { align-items: center; text-align: center; border-right: 1px solid rgba(255,255,255,0.05); }
+        .stack-name { font-size: 1.15rem; font-weight: bold; margin-bottom: 4px; }
+        .stack-sub { font-size: 0.85rem; color: var(--text-muted); }
 
-.panel.active .detail{
-display:block;
-}
+        /* 管線中間：全球核心技術 */
+        .col-global { border-right: 1px solid rgba(255,255,255,0.05); }
+        .global-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 6px; color: #fff; letter-spacing: 1px; }
+        .global-brands { font-size: 0.9rem; color: #94a3b8; font-family: monospace; letter-spacing: 1px; margin-bottom: 8px; }
+        .global-desc { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
 
-.center{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-width:260px;
-height:260px;
-border-radius:50%;
-border:2px solid #00f3ff;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-animation:pulse 3s infinite alternate;
-}
+        /* 管線右側：台股受惠 */
+        .col-tw { align-items: flex-start; }
+        .tw-title { font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .tw-title::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+        .stock-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+        .stock-item { background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 5px; font-weight: bold; font-size: 0.85rem; letter-spacing: 1px; }
 
-@keyframes pulse{
-from{box-shadow:0 0 20px #00f3ff}
-to{box-shadow:0 0 60px #00f3ff}
-}
+        /* 顏色輔助類 */
+        .txt-green { color: var(--neon-green); }
+        .txt-purple { color: var(--neon-purple); }
+        .txt-gold { color: var(--neon-gold); text-shadow: 0 0 10px rgba(255,183,0,0.5); }
+        .bg-green { background: var(--neon-green) !important; color: #000; box-shadow: 0 0 8px rgba(0,255,157,0.6); }
+        .bg-purple { background: var(--neon-purple) !important; color: #fff; box-shadow: 0 0 8px rgba(176,38,255,0.6); }
+        .bg-gold { background: var(--neon-gold) !important; color: #000; box-shadow: 0 0 8px rgba(255,183,0,0.6); }
 
-.openai{top:40px;left:40px}
-.google{top:240px;left:40px}
-.meta{top:440px;left:40px}
-
-.microsoft{top:40px;right:40px}
-.amazon{top:240px;right:40px}
-.apple{top:440px;right:40px}
-
-.nvidia{bottom:260px;left:50%;transform:translateX(-50%)}
-
-.gpu{bottom:160px;left:100px}
-.hbm{bottom:160px;right:100px}
-.ssd{bottom:20px;left:50%;transform:translateX(-50%);width:520px}
-
-.market{
-position:absolute;
-top:10px;
-left:50%;
-transform:translateX(-50%);
-font-size:14px;
-}
-
-.bar{
-height:6px;
-background:#00f3ff;
-animation:grow 4s infinite alternate;
-}
-
-@keyframes grow{
-from{width:20%}
-to{width:100%}
-}
-
-</style>
+    </style>
 </head>
-
 <body>
 
-<canvas id="bg"></canvas>
+<div class="container">
+    
+    <div class="header">
+        <h1>AI 產業生態與供應鏈矩陣</h1>
+        <p>將滑鼠移至任一區塊，查看上下游連動關係</p>
+    </div>
 
-<div class="wrapper">
+    <div class="mag7-row" id="mag7-row">
+        <div class="mag7-card interactive-node" data-links="ssd,gpu,net">
+            <h3 style="color: #fff;">OpenAI</h3>
+            <div class="tag-group"><span class="tag-title">硬體需求</span><div class="tags"><span class="tag">SSD</span><span class="tag">GPU</span><span class="tag">網通</span></div></div>
+            <div class="tag-group"><span class="tag-title">軟體生態</span><div class="tags"><span class="tag">RAG</span><span class="tag">Agent</span></div></div>
+        </div>
+        <div class="mag7-card interactive-node" data-links="ssd,tpu,net">
+            <h3 style="color: var(--neon-blue);">Google</h3>
+            <div class="tag-group"><span class="tag-title">硬體需求</span><div class="tags"><span class="tag">SSD</span><span class="tag">TPU/GPU</span><span class="tag">網通</span></div></div>
+            <div class="tag-group"><span class="tag-title">軟體生態</span><div class="tags"><span class="tag">Search AI</span><span class="tag">Gemini</span></div></div>
+        </div>
+        <div class="mag7-card interactive-node" data-links="ssd,gpu">
+            <h3 style="color: #00a4ef;">Microsoft</h3>
+            <div class="tag-group"><span class="tag-title">硬體需求</span><div class="tags"><span class="tag">SSD</span><span class="tag">資料中心</span></div></div>
+            <div class="tag-group"><span class="tag-title">軟體生態</span><div class="tags"><span class="tag">Copilot</span><span class="tag">Azure AI</span></div></div>
+        </div>
+        <div class="mag7-card interactive-node" data-links="ssd,net">
+            <h3 style="color: #ff9900;">Amazon</h3>
+            <div class="tag-group"><span class="tag-title">硬體需求</span><div class="tags"><span class="tag">SSD</span><span class="tag">網通</span><span class="tag">AWS</span></div></div>
+            <div class="tag-group"><span class="tag-title">軟體生態</span><div class="tags"><span class="tag">Bedrock</span><span class="tag">Cloud AI</span></div></div>
+        </div>
+        <div class="mag7-card interactive-node" data-links="gpu,net">
+            <h3 style="color: #0668E1;">Meta</h3>
+            <div class="tag-group"><span class="tag-title">硬體需求</span><div class="tags"><span class="tag">GPU</span><span class="tag">網通</span></div></div>
+            <div class="tag-group"><span class="tag-title">軟體生態</span><div class="tags"><span class="tag">開源 LLM</span><span class="tag">Llama</span></div></div>
+        </div>
+        <div class="mag7-card interactive-node" data-links="edge">
+            <h3 style="color: #A3AAAE;">Apple</h3>
+            <div class="tag-group"><span class="tag-title">硬體需求</span><div class="tags"><span class="tag">NAND</span><span class="tag">Edge AI</span></div></div>
+            <div class="tag-group"><span class="tag-title">軟體生態</span><div class="tags"><span class="tag">On-device AI</span></div></div>
+        </div>
+        <div class="mag7-card interactive-node" data-links="gpu,hbm,net">
+            <h3 style="color: var(--neon-green);">NVIDIA</h3>
+            <div class="tag-group"><span class="tag-title">硬體需求</span><div class="tags"><span class="tag">GPU</span><span class="tag">HBM</span><span class="tag">高速網路</span></div></div>
+            <div class="tag-group"><span class="tag-title">軟體生態</span><div class="tags"><span class="tag">AI Infra</span></div></div>
+        </div>
+    </div>
 
-<div class="market">
-AI 市場規模成長
-<div class="bar"></div>
-</div>
+    <div class="funnel"><span>產生龐大算力與儲存需求</span></div>
 
-<div class="center">
-AI 典範轉移<br>
-KaaS
-</div>
+    <div class="pipeline-layer layer-compute interactive-node" id="layer-gpu" data-target="gpu,net,tpu">
+        <div class="col-stack">
+            <div class="stack-name txt-green">Compute Layer</div>
+            <div class="stack-sub">算力與網路層</div>
+        </div>
+        <div class="col-global">
+            <div class="global-title txt-green">GPU / AI Server / 網通</div>
+            <div class="global-brands">NVIDIA • AMD • TSMC • Broadcom</div>
+            <div class="global-desc">巨頭訓練與推理的心臟，高度依賴台廠先進製程代工、伺服器組裝與高速傳輸設備。</div>
+        </div>
+        <div class="col-tw">
+            <div class="tw-title txt-green">台股受惠產業鏈</div>
+            <div class="stock-grid">
+                <span class="stock-item bg-green">廣達</span><span class="stock-item bg-green">緯創</span><span class="stock-item bg-green">英業達</span>
+                <span class="stock-item bg-green">技嘉</span><span class="stock-item bg-green">微星</span><span class="stock-item bg-green">華擎</span>
+                <span class="stock-item" style="border: 1px solid var(--neon-green); color: var(--neon-green);">智邦</span><span class="stock-item" style="border: 1px solid var(--neon-green); color: var(--neon-green);">啟碁</span><span class="stock-item" style="border: 1px solid var(--neon-green); color: var(--neon-green);">中磊</span>
+            </div>
+        </div>
+    </div>
 
-<div class="panel openai" onclick="toggle(this)">
-OpenAI
-<div class="detail">
-投資標的:
-台股 SSD
-台股 GPU
+    <div class="pipeline-layer layer-memory interactive-node" id="layer-hbm" data-target="hbm">
+        <div class="col-stack">
+            <div class="stack-name txt-purple">Memory Layer</div>
+            <div class="stack-sub">高頻寬內存層</div>
+        </div>
+        <div class="col-global">
+            <div class="global-title txt-purple">HBM / DRAM</div>
+            <div class="global-brands">SK Hynix • Samsung • Micron</div>
+            <div class="global-desc">緊貼 GPU 的極速記憶體，因產能受限成為 AI 發展的物理瓶頸，迫使巨頭尋找替代儲存方案。</div>
+        </div>
+        <div class="col-tw">
+            <div class="tw-title txt-purple">台股受惠產業鏈</div>
+            <div class="stock-grid">
+                <span class="stock-item bg-purple">南亞科</span><span class="stock-item bg-purple">華邦電</span><span class="stock-item bg-purple">旺宏</span>
+            </div>
+        </div>
+    </div>
 
-產業鏈:
-Memory AI
-Agent
-</div>
-</div>
-
-<div class="panel google" onclick="toggle(this)">
-Google
-<div class="detail">
-投資標的:
-資料中心
-SSD
-
-產業鏈:
-Search AI
-</div>
-</div>
-
-<div class="panel meta" onclick="toggle(this)">
-Meta
-<div class="detail">
-投資標的:
-網路設備
-GPU
-
-產業鏈:
-開源 LLM
-</div>
-</div>
-
-<div class="panel microsoft" onclick="toggle(this)">
-Microsoft
-<div class="detail">
-投資標的:
-雲端
-企業AI
-
-產業鏈:
-Copilot
-</div>
-</div>
-
-<div class="panel amazon" onclick="toggle(this)">
-Amazon
-<div class="detail">
-投資標的:
-AWS
-SSD
-
-產業鏈:
-Bedrock
-</div>
-</div>
-
-<div class="panel apple" onclick="toggle(this)">
-Apple
-<div class="detail">
-投資標的:
-NAND
-手機晶片
-
-產業鏈:
-On device AI
-</div>
-</div>
-
-<div class="panel nvidia" onclick="toggle(this)">
-NVIDIA
-<div class="detail">
-投資標的:
-GPU
-HBM
-
-產業鏈:
-AI infra
-</div>
-</div>
-
-<div class="panel gpu">
-GPU Layer
-</div>
-
-<div class="panel hbm">
-HBM Layer
-</div>
-
-<div class="panel ssd">
-SSD / Vector DB
-</div>
+    <div class="pipeline-layer layer-storage interactive-node" id="layer-ssd" data-target="ssd,edge">
+        <div class="col-stack">
+            <div class="stack-name txt-gold">Storage Layer</div>
+            <div class="stack-sub">向量儲存與檢索層</div>
+        </div>
+        <div class="col-global">
+            <div class="global-title txt-gold">SSD / RAG Vector DB</div>
+            <div class="global-brands">Phison • Silicon Motion • Kioxia</div>
+            <div class="global-desc"><strong>終極解方：</strong>為解決模型知識過期與 HBM 昂貴短缺，所有企業 AI 大腦皆下沉依賴具備無限擴充能力的「高階 SSD」作為 RAG 向量知識庫基石。</div>
+        </div>
+        <div class="col-tw">
+            <div class="tw-title txt-gold">台股受惠產業鏈</div>
+            <div class="stock-grid">
+                <span class="stock-item bg-gold">群聯</span><span class="stock-item bg-gold">慧榮</span><span class="stock-item bg-gold">威剛</span>
+                <span class="stock-item bg-gold">創見</span><span class="stock-item bg-gold">十銓</span><span class="stock-item bg-gold">宇瞻</span>
+            </div>
+        </div>
+    </div>
 
 </div>
 
 <script>
+    // 互動連動邏輯
+    const mag7Cards = document.querySelectorAll('.mag7-card');
+    const layers = document.querySelectorAll('.pipeline-layer');
+    const allNodes = [...mag7Cards, ...layers];
 
-function toggle(el){
-el.classList.toggle('active')
-}
+    function resetNodes() {
+        allNodes.forEach(node => {
+            node.classList.remove('dimmed');
+            node.classList.remove('highlighted');
+        });
+    }
 
-// 3D 粒子背景
+    mag7Cards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            const links = card.dataset.links.split(',');
+            allNodes.forEach(node => node.classList.add('dimmed'));
+            card.classList.remove('dimmed');
+            card.classList.add('highlighted');
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight,0.1,1000);
+            layers.forEach(layer => {
+                const targets = layer.dataset.target.split(',');
+                const isMatch = links.some(link => targets.includes(link));
+                if (isMatch) {
+                    layer.classList.remove('dimmed');
+                    layer.classList.add('highlighted');
+                }
+            });
+        });
+        card.addEventListener('mouseleave', resetNodes);
+    });
 
-const renderer = new THREE.WebGLRenderer({canvas:document.getElementById('bg'),alpha:true});
-renderer.setSize(window.innerWidth,window.innerHeight);
+    layers.forEach(layer => {
+        layer.addEventListener('mouseenter', () => {
+            const targets = layer.dataset.target.split(',');
+            allNodes.forEach(node => node.classList.add('dimmed'));
+            layer.classList.remove('dimmed');
+            layer.classList.add('highlighted');
 
-const geometry = new THREE.BufferGeometry();
-const vertices = [];
-
-for ( let i = 0; i < 5000; i ++ ) {
-vertices.push( THREE.MathUtils.randFloatSpread( 2000 ) );
-vertices.push( THREE.MathUtils.randFloatSpread( 2000 ) );
-vertices.push( THREE.MathUtils.randFloatSpread( 2000 ) );
-}
-
-geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-
-const material = new THREE.PointsMaterial({ color:0x00f3ff });
-const points = new THREE.Points( geometry, material );
-scene.add( points );
-
-camera.position.z = 400;
-
-function animate(){
-requestAnimationFrame(animate);
-points.rotation.x += 0.0003;
-points.rotation.y += 0.0005;
-renderer.render(scene,camera);
-}
-
-animate();
-
+            mag7Cards.forEach(card => {
+                const links = card.dataset.links.split(',');
+                const isMatch = targets.some(target => links.includes(target));
+                if (isMatch) {
+                    card.classList.remove('dimmed');
+                    card.classList.add('highlighted');
+                }
+            });
+        });
+        layer.addEventListener('mouseleave', resetNodes);
+    });
 </script>
 
 </body>
