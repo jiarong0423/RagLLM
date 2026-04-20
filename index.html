@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 七巨頭 LLM 戰略與 SSD 擴展架構全景</title>
+    <style>
+        :root {
+            --bg-deep: #030712;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff007f;
+            --neon-purple: #9d00ff;
+            --neon-gold: #ffb700;
+            --neon-green: #00ff9d;
+            --neon-blue: #007bff;
+            --glass-bg: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #0f172a 0%, var(--bg-deep) 100%);
+            color: #f8fafc;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .dashboard-wrapper {
+            position: relative;
+            width: 1300px;
+            height: 900px;
+        }
+
+        .svg-connections {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .line {
+            stroke-width: 2.5;
+            stroke-dasharray: 15;
+            animation: dash 20s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        .panel {
+            position: absolute;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 280px;
+        }
+
+        .panel:hover {
+            transform: scale(1.05) translateY(-5px);
+            z-index: 20;
+        }
+
+        h3 { margin-top: 0; font-size: 1.1rem; letter-spacing: 1px; }
+        p { font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 5px; }
+        .tag { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; }
+
+        .panel-bottleneck { top: 60px; left: 50px; border-left: 4px solid var(--neon-pink); }
+        .panel-bottleneck:hover { box-shadow: 0 0 30px rgba(255, 0, 127, 0.3); }
+
+        .panel-search { top: 60px; right: 50px; border-right: 4px solid var(--neon-purple); }
+        .panel-search:hover { box-shadow: 0 0 30px rgba(157, 0, 255, 0.3); }
+
+        .panel-meta { top: 380px; left: 50px; border-left: 4px solid var(--neon-green); }
+        .panel-meta:hover { box-shadow: 0 0 30px rgba(0, 255, 157, 0.3); }
+
+        .panel-msft { top: 380px; right: 50px; border-right: 4px solid var(--neon-blue); }
+        .panel-msft:hover { box-shadow: 0 0 30px rgba(0, 123, 255, 0.3); }
+
+        .panel-ssd { bottom: 40px; left: 50%; transform: translateX(-50%); border-bottom: 4px solid var(--neon-gold); width: 450px; }
+        .panel-ssd:hover { transform: translateX(-50%) scale(1.05) translateY(-5px); box-shadow: 0 0 30px rgba(255, 183, 0, 0.3); }
+        .panel-ssd h3 { text-align: center; }
+
+        .center-core {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px;
+            height: 240px;
+            background: radial-gradient(circle, rgba(0,243,255,0.1) 0%, rgba(3,7,18,0.9) 70%);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 15;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.4), inset 0 0 20px rgba(0, 243, 255, 0.4);
+            animation: core-pulse 3s infinite alternate;
+            text-align: center;
+        }
+
+        .center-core h2 { color: #fff; margin: 0; font-size: 1.5rem; text-shadow: 0 0 15px var(--neon-cyan); }
+        .center-core span { color: var(--neon-cyan); font-size: 0.85rem; margin-top: 10px; letter-spacing: 2px; }
+
+        @keyframes core-pulse {
+            0% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 15px rgba(0, 243, 255, 0.2); }
+            100% { box-shadow: 0 0 60px rgba(0, 243, 255, 0.6), inset 0 0 30px rgba(0, 243, 255, 0.5); }
+        }
+
+        .highlight-pink { color: #ff66a3; }
+        .highlight-purple { color: #d580ff; }
+        .highlight-green { color: #66ffc2; }
+        .highlight-blue { color: #66b2ff; }
+        .highlight-gold { color: #ffcc4d; }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        <svg class="svg-connections">
+            <path class="line" d="M 650 360 C 400 360, 350 150, 330 150" fill="none" stroke="url(#pink-grad)"></path>
+            <path class="line" d="M 650 360 C 900 360, 950 150, 970 150" fill="none" stroke="url(#purple-grad)"></path>
+            <path class="line" d="M 650 360 C 400 360, 350 480, 330 480" fill="none" stroke="url(#green-grad)"></path>
+            <path class="line" d="M 650 360 C 900 360, 950 480, 970 480" fill="none" stroke="url(#blue-grad)"></path>
+            <path class="line" d="M 650 360 C 650 600, 650 700, 650 750" fill="none" stroke="url(#gold-grad)"></path>
+
+            <defs>
+                <linearGradient id="pink-grad" x1="1" y1="0" x2="0" y2="0"><stop offset="0%" stop-color="#00f3ff" /><stop offset="100%" stop-color="#ff007f" /></linearGradient>
+                <linearGradient id="purple-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00f3ff" /><stop offset="100%" stop-color="#9d00ff" /></linearGradient>
+                <linearGradient id="green-grad" x1="1" y1="0" x2="0" y2="0"><stop offset="0%" stop-color="#00f3ff" /><stop offset="100%" stop-color="#00ff9d" /></linearGradient>
+                <linearGradient id="blue-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#00f3ff" /><stop offset="100%" stop-color="#007bff" /></linearGradient>
+                <linearGradient id="gold-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00f3ff" /><stop offset="100%" stop-color="#ffb700" /></linearGradient>
+            </defs>
+        </svg>
+
+        <div class="center-core">
+            <h2>AI 典範轉移<br>與巨頭佈局</h2>
+            <span>Knowledge as a Service<br>(KaaS)</span>
+        </div>
+
+        <div class="panel panel-bottleneck">
+            <div class="tag" style="background: rgba(255,0,127,0.2); color: #ff66a3;">痛點解析</div>
+            <h3 style="color: var(--neon-pink);">參數固化的極限</h3>
+            <p><strong class="highlight-pink">知識過期：</strong>模型出廠即落後，無法回答昨天的新聞。</p>
+            <p><strong class="highlight-pink">HBM 記憶體牆：</strong>大參數模型極度消耗高昂的 DRAM 資源，單純「死記硬背」已不符成本效益。</p>
+        </div>
+
+        <div class="panel panel-search">
+            <div class="tag" style="background: rgba(157,0,255,0.2); color: #d580ff;">Google / OpenAI</div>
+            <h3 style="color: var(--neon-purple);">動態檢索與原生 RAG</h3>
+            <p><strong class="highlight-purple">Search AI：</strong>自動判別語境，複雜問題無縫切換為「向量檢索 + LLM 推理」。</p>
+            <p><strong class="highlight-purple">Opus 4.7 世代：</strong>模型原生綁定 RAG 外掛，確保回答永遠錨定最新世界狀態。</p>
+        </div>
+
+        <div class="panel panel-meta">
+            <div class="tag" style="background: rgba(0,255,157,0.2); color: #66ffc2;">Meta</div>
+            <h3 style="color: var(--neon-green);">開源破局 (Llama 生態)</h3>
+            <p><strong class="highlight-green">模型免費化：</strong>將 LLM 降級為「免費基礎設施」，藉此打破對手的定價權。</p>
+            <p><strong class="highlight-green">刺激檢索需求：</strong>當所有人都能跑 Llama，企業的競爭力就轉移到「誰的外部資料庫 (RAG) 更大更準」。</p>
+        </div>
+
+        <div class="panel panel-msft">
+            <div class="tag" style="background: rgba(0,123,255,0.2); color: #66b2ff;">Microsoft</div>
+            <h3 style="color: var(--neon-blue);">B2B 企業大腦 (Copilot)</h3>
+            <p><strong class="highlight-blue">無縫整合：</strong>將企業內部的 SharePoint/Office 檔案全部轉化為向量索引。</p>
+            <p><strong class="highlight-blue">SLM (小語言模型)：</strong>利用較便宜的小模型 (如 Phi 系列) 搭配龐大的向量資料庫，達成最高性價比的企業私有化 AI。</p>
+        </div>
+
+        <div class="panel panel-ssd">
+            <div class="tag" style="background: rgba(255,183,0,0.2); color: #ffcc4d; display: block; text-align: center; width: 80px; margin: 0 auto 10px auto;">底層基石</div>
+            <h3 style="color: var(--neon-gold);">SSD：承載巨頭戰略的海量載體</h3>
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-top: 10px; font-size: 0.85rem; line-height: 1.5;">
+                不管是 Google 的動態搜尋、Meta 帶起的開源生態，還是微軟的企業私有庫，**共同的終點都是「無限擴展的外部知識」**。<br><br>
+                <span class="highlight-gold">技術落地：</span>百億級別的向量無法塞入昂貴的 DRAM。唯有透過 **NVMe 高階 SSD 搭配向量檢索演算法 (DiskANN)**，才能讓所有巨頭的 RAG 戰略在「低成本、TB級擴充、低延遲」的物理現實中真正落地。
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
